@@ -41,6 +41,15 @@ resource "google_storage_bucket" "bucket" {
   public_access_prevention = "enforced"
 }
 
-output "bucket_url" {
-  value = google_storage_bucket.bucket.url
+# IAM policy to avoid overly permissive access
+resource "google_storage_bucket_iam_member" "bucket_viewer" {
+  bucket = google_storage_bucket.bucket.name
+  role   = "roles/storage.objectViewer"
+  member = "user:your-email@example.com"
+}
+
+resource "google_storage_bucket_iam_member" "bucket_admin" {
+  bucket = google_storage_bucket.bucket.name
+  role   = "roles/storage.admin"
+  member = "serviceAccount:your-service-account@example.iam.gserviceaccount.com"
 }
