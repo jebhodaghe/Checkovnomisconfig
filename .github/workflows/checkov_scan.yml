@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read  # Only read access is given to the contents of the repository
+
 jobs:
   checkov_scan:
     runs-on: ubuntu-latest
@@ -16,17 +19,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: '3.9'
 
       - name: Install Checkov
         run: pip install checkov
 
       - name: Run Checkov
-        id: checkov
         run: checkov -d .
-      
-      - name: Check Checkov results
-        if: ${{ steps.checkov.outputs.exitcode != 0 }}
-        run: exit 1
+
