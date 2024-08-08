@@ -1,0 +1,32 @@
+name: Checkov Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  checkov_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov
+        id: checkov
+        run: checkov -d .
+      
+      - name: Check Checkov results
+        if: ${{ steps.checkov.outputs.exitcode != 0 }}
+        run: exit 1
